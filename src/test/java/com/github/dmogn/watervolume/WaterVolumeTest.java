@@ -2,9 +2,8 @@ package com.github.dmogn.watervolume;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.*;
 
 /**
  * Unit tests of water volume calculation algorithm.
@@ -18,39 +17,49 @@ public class WaterVolumeTest {
     public WaterVolumeTest() {
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         testLandscape = new int[]{5, 2, 3, 4, 5, 4, 0, 3, 1};
     }
 
     @Test
+    @DisplayName("general algorithm test")
     public void calculateWaterAmountTest() {
         final long volume = WaterVolume.calculateWaterAmount(testLandscape);
-        assertEquals(volume, 9);
+        assertEquals(9, volume);
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void lanscapeLimitsMaxHeightTest() {
         
         int uncorrectLandscape[] = new int[]{5, 2, 3, 4, 32001, 4, 0, 3, 4};
         
-        WaterVolume.calculateWaterAmount(uncorrectLandscape);
+        assertThrows(IllegalArgumentException.class,
+            ()->{
+                WaterVolume.calculateWaterAmount(uncorrectLandscape);
+            });
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void lanscapeLimitsMinHeightTest() {
         
         int uncorrectLandscape[] = new int[]{5, 2, 3, 4, 3, 4, 0, 3, -1};
         
-        WaterVolume.calculateWaterAmount(uncorrectLandscape);
+        assertThrows(IllegalArgumentException.class,
+            ()->{
+                WaterVolume.calculateWaterAmount(uncorrectLandscape);
+            });
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void lanscapeLimitsMaxSizeTest() {
-        
         int uncorrectLandscape[] = new int[34000];
         Arrays.fill(uncorrectLandscape, 0);
-        WaterVolume.calculateWaterAmount(uncorrectLandscape);
+        
+        assertThrows(IllegalArgumentException.class,
+            ()->{
+                WaterVolume.calculateWaterAmount(uncorrectLandscape);
+            });
     }
 
     @Test
@@ -61,7 +70,7 @@ public class WaterVolumeTest {
 
         // test findWaterLevelForward()
         Utils.invokeStaticMethod(WaterVolume.class, "findWaterLevelForward", new Class[]{int[].class, int[].class}, new Object[]{testLandscape, waterLevel});
-        assertArrayEquals(waterLevel, new int[]{5, 5, 5, 5, 5, 5, 5, 5, 5});
+        assertArrayEquals(new int[]{5, 5, 5, 5, 5, 5, 5, 5, 5}, waterLevel);
     }
 
     @Test
@@ -72,7 +81,7 @@ public class WaterVolumeTest {
 
         // test findWaterLevelForward()
         Utils.invokeStaticMethod(WaterVolume.class, "findWaterLevelBackward", new Class[]{int[].class, int[].class}, new Object[]{testLandscape, waterLevel});
-        assertArrayEquals(waterLevel, new int[]{5, 5, 5, 5, 5, 4, 3, 3, 1});
+        assertArrayEquals(new int[]{5, 5, 5, 5, 5, 4, 3, 3, 1}, waterLevel);
     }
 
 }
